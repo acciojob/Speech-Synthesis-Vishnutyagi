@@ -20,8 +20,8 @@
       <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
 
       <label for="pitch">Pitch:</label>
+      <input name="pitch" type="range" min="0" max="2" value="1" step="0.1">
 
-      <input name="pitch" type="range" min="0" max="2" step="0.1">
       <textarea name="text">Hello! I love JavaScript 👍</textarea>
       <button id="stop">Stop!</button>
       <button id="speak">Speak</button>
@@ -36,7 +36,32 @@
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
 
-  //Your code goes here
+  function populateVoices() {
+    voices = this.getVoices();
+    voicesDropdown.innerHTML = voices
+      .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+      .join('');
+  }
+
+  function setVoice() {
+    msg.voice = voices.find(voice => voice.name === this.value);
+  }
+
+  function setOption() {
+    msg[this.name] = this.value;
+  }
+
+  function startSpeaking() {
+    speechSynthesis.cancel();
+    msg.text = document.querySelector('[name="text"]').value;
+    speechSynthesis.speak(msg);
+  }
+
+  speechSynthesis.addEventListener('voiceschanged', populateVoices);
+  voicesDropdown.addEventListener('change', setVoice);
+  options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', startSpeaking);
+  stopButton.addEventListener('click', () => speechSynthesis.cancel());
 </script>
 
 </body>
